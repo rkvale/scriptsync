@@ -2,6 +2,11 @@ var servicemappingutil = Class.create();
 servicemappingutil.prototype = {
     initialize: function() {
 		var logLevelPropertyName = this.type + '.log.level';
+
+		//creating the logger :-)
+		this.logger = new GSLog(logLevelPropertyName, this.type);	
+		this.logger.logDebug("Initializing");	
+
 		this.relations = ['60bc4e22c0a8010e01f074cbe6bd73c3','1a9cb166f1571100a92eb60da2bce5c5']; //Runs::on, Depends::on
 		this.services = [];
 		this.result = [];
@@ -14,9 +19,6 @@ servicemappingutil.prototype = {
 			gr_property.value = 'info';
 			var something = gr_property.insert();
 		}
-		//creating the logger :-)
-		this.logger = new GSLog(logLevelPropertyName, this.type);	
-		this.logger.logDebug("Initializing");	
 		
 		//setting up query type parameter
 		//create_type_query(this.relations);
@@ -27,35 +29,45 @@ servicemappingutil.prototype = {
 	 * Create relations between two CIs(switches) based on device neighbors
 	 * The sysid are sysid to neighbor record in discovery_device_neighbors table
 	 * @param {*} arr_sysids 
-	 * :-)
 	 */
 	create_neighbors: function(arr_sysids){
 		this.logger.logDebug("creating neighbors for the following neighbor record sysid: " + arr_sysids.length + arr_sysids.toString());
-		var query = "parent.sysIdSTARTSWITHtest^child.nameSTARTSWITHtest^type=3deab95338a02000c18673032c71b876"	
 		var type = "3deab95338a02000c18673032c71b876"; //Connected by::Connects
 		for (const sysid of arr_sysids){
 			var neighbor = new GlideRecord("discovery_device_neighbors");
 			if(neighbor.get(sysid)){
-				this.logger.logDebug("creating relations between the following devices (switches) " + neighbor.cmdb_ci + " and " + neighbor.neighbor_interface.cmdb_ci);
-//				var relation = new GlideRecord("cmdb_rel_ci");
-//				var query = "parent.sysIdSTARTSWITH" + neighbor.cmdb_ci + "^child.sys_idSTARTSWITH"+ neighbor.neighbor_interface.cmdb_ci + "^type=" + type;	
-				//relation.addEncodedQuery(query);
-//				this.logger.logDebug("query to check if relation already exists: " + query);
+				this.logger.logDebug("checking relations between the following devices (switches) " + neighbor.cmdb_ci + " and " + neighbor.neighbor_interface.cmdb_ci);
 
+				var querystr = "parent.sys_id=" + neighbor.cmdb_ci + "^child.sys_id=" + neighbor.neighbor_interface.cmdb_ci + "^type.sys_id=3deab95338a02000c18673032c71b876";
+				this.logger.logDebug("encoded query for relation: " + querystr);
+				
+				var relation = new GlideRecord("cmdb_rel_ci");
+				relation.addEncodedQuery(querystr);
+				relation.query();
 
-				relation.initialize();
-			//	relation.parent = ;
-			//	relation.child = type;
-			//	relation.type = "";
+				if(relation.getRowCount() > 0){
+					this.logger.logDebug("Relation already exists between " + neighbor.cmdb_ci + " and " + neighbor.neighbor_interface.cmdb_ci);
+					continue;
+				}else{
+					this.logger.logDebug("No relation exists between " + neighbor.cmdb_ci + " and " + neighbor.neighbor_interface.cmdb_ci + ". Creating relation.");
+					relation.initialize();
+					relation.parent = neighbor.cmdb_ci;
+					relation.child = neighbor.neighbor_interface.cmdb_ci;
+					relation.type = type;
+					var relation_sysid = relation.insert();
+					this.logger.logDebug("Created relation with sysid: " + relation_sysid);
+				}
+
 			}else{
 				this.logger.logWarning("Could not find neighbor record with sysId " + sysid);
+				continue;	
 			};
 
 		};
 
 	},
 	
-	//not finished yet :-)
+	//not finished yet :-) får se om vi trenger denne 
 	create_type_query: function(rels){
 		gs.info('RELATIONS ' + rels)
 	},

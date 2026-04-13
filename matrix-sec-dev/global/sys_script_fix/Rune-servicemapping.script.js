@@ -1,14 +1,14 @@
 var test = new servicemappingutil();
 
-//var sysids = ["69e4ee61df837650f6b69e16c11e260d","2de4ee612883765038ac5e53f4c0bf0d","38ff7ac7fc93d550eb3f785274505230","0e89e536dd01e1d4eb3f744d6cffcaf4"];
+var sysids = ["0741ec8ec9bc2010eb3fab42ed68491c","72ecc5c7b98a92d8eb3fd9a19a1bdd30","7eecc5c7b98a92d8eb3fd9a19a1bdd2f","f6ec05c7b98a92d8eb3fd9a19a1bdd08"];
 
 //test.create_neighbors(sysids);
 
 
+gs.info(test.fetch_parent("0311e0cac9bc2010eb3fab42ed6849be "));	
 
 
-
-
+//parent.sys_id=0311e0cac9bc2010eb3fab42ed6849be^type.sys_id=3deab95338a02000c18673032c71b876^child.sys_id=d6282ea5b074a810eb3f3df6315d998c
 
 /*
 this.bsm = new SNC.BusinessServiceManager();
