@@ -1,0 +1,78 @@
+[
+    [
+        {
+            "info": [],
+            "inputIndices": [
+                {
+                    "mainIndex": 47,
+                    "subIndex": 0
+                }
+            ],
+            "markers": [],
+            "mergedPayloadIds": [],
+            "warningCount": 0,
+            "errorCount": 0,
+            "errors": [],
+            "operation": "NO_CHANGE",
+            "sysId": "0e89e536dd01e1d4eb3f744d6cffcaf4",
+            "className": "discovery_device_neighbors"
+        }
+    ],
+    [
+        {
+            "info": [],
+            "inputIndices": [
+                {
+                    "mainIndex": 21,
+                    "subIndex": 0
+                }
+            ],
+            "markers": [],
+            "mergedPayloadIds": [],
+            "warningCount": 0,
+            "errorCount": 0,
+            "errors": [],
+            "operation": "NO_CHANGE",
+            "sysId": "69e4ee61df837650f6b69e16c11e260d",
+            "className": "discovery_device_neighbors"
+        }
+    ],
+    [
+        {
+            "info": [],
+            "inputIndices": [
+                {
+                    "mainIndex": 46,
+                    "subIndex": 0
+                }
+            ],
+            "markers": [],
+            "mergedPayloadIds": [],
+            "warningCount": 0,
+            "errorCount": 0,
+            "errors": [],
+            "operation": "NO_CHANGE",
+            "sysId": "38ff7ac7fc93d550eb3f785274505230",
+            "className": "discovery_device_neighbors"
+        }
+    ],
+    [
+        {
+            "info": [],
+            "inputIndices": [
+                {
+                    "mainIndex": 45,
+                    "subIndex": 0
+                }
+            ],
+            "markers": [],
+            "mergedPayloadIds": [],
+            "warningCount": 0,
+            "errorCount": 0,
+            "errors": [],
+            "operation": "NO_CHANGE",
+            "sysId": "2de4ee612883765038ac5e53f4c0bf0d",
+            "className": "discovery_device_neighbors"
+        }
+    ]
+]
