@@ -2,10 +2,10 @@ var test = new servicemappingutil();
 
 var sysids = ["0741ec8ec9bc2010eb3fab42ed68491c","72ecc5c7b98a92d8eb3fd9a19a1bdd30","7eecc5c7b98a92d8eb3fd9a19a1bdd2f","f6ec05c7b98a92d8eb3fd9a19a1bdd08"];
 
-//test.create_neighbors(sysids);
+test.create_neighbors(sysids);
 
 
-gs.info(test.fetch_parent("0311e0cac9bc2010eb3fab42ed6849be "));	
+//gs.info(test.fetch_parent("0311e0cac9bc2010eb3fab42ed6849be "));	
 
 
 //parent.sys_id=0311e0cac9bc2010eb3fab42ed6849be^type.sys_id=3deab95338a02000c18673032c71b876^child.sys_id=d6282ea5b074a810eb3f3df6315d998c

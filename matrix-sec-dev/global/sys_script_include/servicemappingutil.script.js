@@ -67,7 +67,7 @@ servicemappingutil.prototype = {
 
 	},
 	
-	//not finished yet :-) får se om vi trenger denne 
+	//not finished yet :-)
 	create_type_query: function(rels){
 		gs.info('RELATIONS ' + rels)
 	},
@@ -97,97 +97,6 @@ servicemappingutil.prototype = {
 			return;
 		}
 	},
-
-
-
-
-	/**
-	* find all 
-	*
-	* @param {(type)} (Variable name) - (desc) 
-	* @return {(type)} (Variable name) - (desc)
-	*/
-	fetch_related02: function(sys_id){
-		
-
-		var gr_rel = new GlideRecord('cmdb_rel_ci');
-		var query = 'child=' + sys_id + '^type=1a9cb166f1571100a92eb60da2bce5c5';
-		gr_rel.addEncodedQuery(query);
-		gr_rel.query();
-
-		if(gr_rel.hasNext()){
-			while(gr_rel.next()){
-					this.result.push(gr_rel.parent.toString());
-					this.fetch_related02(gr_rel.parent);
-			}
-			return this.result;
-		}else{
-			return;
-		}
-	},
-	fetch_relatedbackup: function(sys_id){
-		var gr_rel = new GlideRecord('cmdb_rel_ci');
-		var query = 'child=' + sys_id + '^type=1a9cb166f1571100a92eb60da2bce5c5';
-		gr_rel.addEncodedQuery(query);
-		gr_rel.query();
-		//gs.info(gr_rel.getRowCount());
-		if(gr_rel.hasNext()){
-			while(gr_rel.next()){
-					gs.info("parent: " + gr_rel.parent.name + ' - ' + gr_rel.parent);
-					gs.info("this.result01: " + this.result);
-					this.result.push(gr_rel.parent.toString());
-					//this.result.push(gr_rel.parent);
-					gs.info("this.result02: " + this.result);
-					gs.info("return while " + this.fetch_related02(gr_rel.parent));
-					//return "testing";
-					
-					//return gr_rel.parent.name;
-			}
-			return this.result;
-		}else{
-			return "nope";
-		}
-
-		//gs.info("result  " + this.result);
-		//return this.result;
-	},
-	fetch_related: function(sys_id){
-		try{
-			var query = 'child=' + sys_id + '^type=1a9cb166f1571100a92eb60da2bce5c5';
-			var gr_rel = new GlideRecord('cmdb_rel_ci');
-			gr_rel.addEncodedQuery(query);
-			gr_rel.query();
-			if(gr_rel.hasNext()){
-				while(gr_rel.next()){
-					gs.info("Child: " + gr_rel.child.name + ' - ' + gr_rel.child.sys_id);
-					gs.info("parent: " + gr_rel.parent.name + ' - ' + gr_rel.parent);
-					//this.result.push(this.fetch_related(gr_rel.parent.sys_id));
-					this.fetch_related(gr_rel.parent.sys_id);
-					gs.info("RESULT: " + this.result);
-					//gs.info("RETURN ********* " + gr_rel.child.sys_id);
-					//return gr_rel.child.sys_id;					
-				}
-					gs.info("RETURN ********* " + gr_rel.child.sys_id);
-					//return gr_rel.child.sys_id;
-					return this.result.push(gr_rel.child.sys_id);
-
-
-			}else{
-				//tomt
-				gs.info("TOM *********: " + sys_id);
-				//return sys_id;
-				return this.result.push(sys_id);
-			}
-
-			//gs.info("#####################: " + gr_rel.child.sys_id);
-			//return this.result;	
-		}catch(error){
-			this.logger.logWarning("hmmm: " + error);
-		}
-		gs.info("??????????????????????????????");
-		return this.result;
-	},
-
 
     type: 'servicemappingutil'
 };
