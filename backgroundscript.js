@@ -9,8 +9,3 @@ relation.child = "a131f26db078a810eb3f3df6315d997d";
 relation.type = "3deab95338a02000c18673032c71b876";
 
 relation.insert();
-
-
-
-
-//testing
