@@ -72,14 +72,14 @@ servicemappingutil.prototype = {
 		gs.info('RELATIONS ' + rels)
 	},
 
-	/** en liten test
+	/**
 	* find all parent with a given relations to the CI provided
 	*
 	* @param {string} sys_id - cmdb_ci sys_id 
 	* @return {array} something - holds sys_id to all parents
 	*/
 	fetch_parent: function(sys_id){
-		gs.info("testing");
+		//gs.info("testing");
 		var relations = ['1a9cb166f1571100a92eb60da2bce5c5']; //depends:on
 
 		var gr_rel = new GlideRecord('cmdb_rel_ci');

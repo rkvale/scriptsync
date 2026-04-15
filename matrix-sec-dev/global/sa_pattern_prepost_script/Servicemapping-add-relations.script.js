@@ -1,12 +1,12 @@
 /*
  * Post sensor: You can update/add missing info to the DB based on result (Json) from
  * Identification Engine
- * Output parameters in Post sensor mode: payload
+ * Output parameters in Post sensor mode: payload 
  */
 
 //create logger, uses the same property as servicemappingutil script include
-this.logger = new GSLog("servicemappingutil.log.level","ServiceMapping-Pre Post Pattern");
-//this.logger.includeTimestamp();
+this.logger = new GSLog("servicemappingutil.log.level","ServiceMapping");
+this.logger.includeTimestamp();
 
 
 var rtrn = {};
@@ -22,22 +22,12 @@ try{
 			.some(some => some.className === "discovery_device_neighbors"))
 			.map(item => item.relatedItems[0].sysId);
 			
-	this.logger.logDebug("related - " + JSON.stringify(related));
-	if(related.length > 0){
-		this.logger.logDebug("SysIds fetched successfully: " + related.join(", "));
-		// Do something with the sysIds
-		this.logger.logDebug("Creating relations between CIs based on neighbor records.");
-		var mappingUtil = new servicemappingutil();
-		mappingUtil.create_neighbors(related);
-	}else{
-		this.logger.logDebug("No related SysIds found.");
-	}
+	this.logger.logDebug("Neighbors: " + JSON.stringify(related));
 
 }catch(error){
 	this.logger.logErr("Failed getting sysIds from json payload: " + error);
 }
 
-this.logger.logDebug("Script execution completed.");
 
 // Clearing payload string to save memory
 payload = null;
@@ -48,7 +38,7 @@ payload = null;
 // If you want to terminate the payload processing due to your business logic - you can set isSuccess to false.
 rtrn = {
 	'status': {
-		'message': 'Servicemapping: relations creation script executed successfully.',
+		'message': 'Enter your message here',
 		'isSuccess' :true
 	},
 	'patternId': patternId
