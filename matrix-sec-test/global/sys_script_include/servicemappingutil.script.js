@@ -10,6 +10,8 @@ servicemappingutil.prototype = {
 		this.relations = ['60bc4e22c0a8010e01f074cbe6bd73c3','1a9cb166f1571100a92eb60da2bce5c5']; //Runs::on, Depends::on
 		this.services = [];
 		this.result = [];
+		this.result_new = [];
+
 		//If the log level property does no exists we create it
 		if(!gs.getProperty(logLevelPropertyName)){
 			var gr_property = new GlideRecord('sys_properties');
@@ -129,7 +131,45 @@ servicemappingutil.prototype = {
 	},
 
 	fetch_parent_new: function(sys_id){
+		//var relations = ["41008aa6ef32010098d5925495c0fb94","1a9cb166f1571100a92eb60da2bce5c5"];
 		this.logger.logDebug("Fetching parent for CI with sys_id " + sys_id);
+		var gr_rel = new GlideRecord('cmdb_rel_ci');
+		// var query = 'child=' + sys_id + '^type=1a9cb166f1571100a92eb60da2bce5c5';
+		var query = 'child=' + sys_id;
+
+		gr_rel.addEncodedQuery(query);
+		gr_rel.query();	
+			
+
+		if(gr_rel.hasNext()){
+			while(gr_rel.next()){
+				this.logger.logDebug("Found parent relation: " + gr_rel.parent.name);	
+				this.fetch_parent_new(gr_rel.parent);
+		//		this.logger.logDebug("????????????????? Adding parent with sys_id " + gr_rel.parent.sys_id + " to result array.");
+				var gr = new GlideRecord("cmdb_ci");
+				// this.logger.logDebug("22222222222222222222");
+				if(gr.get(gr_rel.parent.sys_id)){
+					// this.logger.logDebug("333333333333333333");
+					gr.next();
+					// this.logger.logDebug("44444444444444444444");
+					// cmdb_ci_business_capability cmdb_ci_business_app
+					if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+						this.logger.logDebug("????????????????? Adding parent with sys_id " + gr_rel.parent.sys_id + " to result array.");
+						this.result_new.push(gr_rel.parent.toString());
+						this.logger.logDebug("&&&&&&&&&&&&&&&&&&&&&&& Parent record type: " + gr.getRecordClassName());					
+					}else{
+						// this.logger.logDebug("55555555555555555555");
+					}
+				}else{
+					this.logger.logDebug("EEEEEEEEEEEEEEEEEEEEEElse ");
+				}
+			this.logger.logDebug("************* Result: " + this.result_new);
+			}
+		}else{
+			this.logger.logDebug("############ No more parents found for CI with sys_id " + sys_id);
+		}
+
+		this.logger.logDebug("22222222222222222222 Result: " + this.result_new);
 	},
 
     type: 'servicemappingutil'

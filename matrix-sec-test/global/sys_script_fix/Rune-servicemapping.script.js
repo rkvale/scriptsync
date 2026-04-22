@@ -7,16 +7,32 @@
 //test.create_neighbors(sysids);
 
 
+// test gliderecord
+//var gr = new GlideRecord("cmdb_ci");
+//gr.get("940aa2f2c9306410eb3fab42ed684952");
+
+//gs.info("table: " + gr.getTableName());
+//gs.info("record class name: " + gr.getRecordClassName());
+//if(gr.getRecordClassName() === "cmdb_ci_business_app"){
+//	gs.info("found a business application");
+//}
+
+
+
+//test fetch parent new
+
+var test = new servicemappingutil();
+test.fetch_parent_new("6f8368f847bbb2902af1179095f63c24");
 
 
 
 
 
 //test fetch parent
-var test = new servicemappingutil();
-var ids = test.fetch_parent("6f8368f847bbb2902af1179095f63c24");
+//var test = new servicemappingutil();
+//var ids = test.fetch_parent("6f8368f847bbb2902af1179095f63c24");
 //var ids = test.fetch_parent("683bcdd828c0f0d0eb3fd439ce24f651");
-gs.info("PARENT IDS: " + ids);
+//gs.info("PARENT IDS: " + ids);
 
 
 
