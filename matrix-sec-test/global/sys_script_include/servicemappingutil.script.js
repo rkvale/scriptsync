@@ -36,12 +36,20 @@ servicemappingutil.prototype = {
 		for (const sysid of arr_sysids){
 			var neighbor = new GlideRecord("discovery_device_neighbors");
 			if(neighbor.get(sysid)){
+				var testing = neighbor.neighbor_interface.cmdb_ci;
+				if(neighbor.getValue("neighbor_interface") === null){
+					this.logger.logDebug("Neighbor record with sysId " + sysid + " has null value in neighbor_interface.cmdb_ci field. Skipping this record.");
+					continue;
+				}else{
+					this.logger.logDebug("Processing neighbor record with sysId " + sysid + " and neighbor_interface.cmdb_ci " + neighbor.neighbor_interface.cmdb_ci);
+				}
+				
 				this.logger.logDebug("checking relations between the following devices (switches) " + neighbor.cmdb_ci + " and " + neighbor.neighbor_interface.cmdb_ci);
 
 				var querystr = "parent.sys_id=" + neighbor.cmdb_ci + "^child.sys_id=" + neighbor.neighbor_interface.cmdb_ci + "^type.sys_id=3deab95338a02000c18673032c71b876";
 //				var reversed_querystr = "parent.sys_id=" + neighbor.neighbor_interface.cmdb_ci + "^child.sys_id=" + neighbor.cmdb_ci + "^type.sys_id=3deab95338a02000c18673032c71b876";
 				this.logger.logDebug("encoded query for relation: " + querystr);
-				this.logger.logDebug("encoded query for reversed relation: " + reversed_querystr);
+//				this.logger.logDebug("encoded query for reversed relation: " + reversed_querystr);
 				
 				var relation = new GlideRecord("cmdb_rel_ci");
 //				var reversed_relation = new GlideRecord("cmdb_rel_ci");
@@ -88,7 +96,7 @@ servicemappingutil.prototype = {
 	
 	//not finished yet :-)
 	create_type_query: function(rels){
-		gs.info('RELATIONS ' + rels)
+		this.logger.logDebug("To be contunied...");
 	},
 
 	/**
@@ -98,23 +106,30 @@ servicemappingutil.prototype = {
 	* @return {array} something - holds sys_id to all parents
 	*/
 	fetch_parent: function(sys_id){
-		//gs.info("testing");
-		var relations = ['1a9cb166f1571100a92eb60da2bce5c5']; //depends:on
+		//var relations = ['1a9cb166f1571100a92eb60da2bce5c5']; //depends:on
 
 		var gr_rel = new GlideRecord('cmdb_rel_ci');
-		var query = 'child=' + sys_id + '^type=1a9cb166f1571100a92eb60da2bce5c5';
+		//var query = 'child=' + sys_id + '^type=1a9cb166f1571100a92eb60da2bce5c5';
+		var query = 'child=' + sys_id;
+
 		gr_rel.addEncodedQuery(query);
 		gr_rel.query();
 
 		if(gr_rel.hasNext()){
 			while(gr_rel.next()){
-					this.result.push(gr_rel.parent.toString());
-					this.fetch_related02(gr_rel.parent);
+				this.logger.logDebug("Found parent relation for CI with sys_id " + sys_id + ". Parent sys_id: " + gr_rel.parent.sys_id);
+				this.logger.logDebug("parent type: " + gr_rel.parent.name);
+				this.result.push(gr_rel.parent.toString());
+				this.fetch_parent(gr_rel.parent);
 			}
 			return this.result;
 		}else{
 			return;
 		}
+	},
+
+	fetch_parent_new: function(sys_id){
+		this.logger.logDebug("Fetching parent for CI with sys_id " + sys_id);
 	},
 
     type: 'servicemappingutil'

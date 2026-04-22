@@ -1,12 +1,22 @@
-var test = new servicemappingutil();
-
+//var test = new servicemappingutil();
 //var sysids = ["69e4ee61df837650f6b69e16c11e260d","2de4ee612883765038ac5e53f4c0bf0d","38ff7ac7fc93d550eb3f785274505230","0e89e536dd01e1d4eb3f744d6cffcaf4"];
-
+//test.create_neighbors(sysids);
+//var test = new servicemappingutil();
+//var sysids = ["52e5077817b7f69019b07d38aa55506b"];
+//var sysids = ["2e08ffe575f7b29052321174bdc26924", "6a08ffe572f7b290bce6230ec87a0924", "6608ffe552f7b290c529dc5131361422"];
 //test.create_neighbors(sysids);
 
 
 
 
+
+
+
+//test fetch parent
+var test = new servicemappingutil();
+var ids = test.fetch_parent("6f8368f847bbb2902af1179095f63c24");
+//var ids = test.fetch_parent("683bcdd828c0f0d0eb3fd439ce24f651");
+gs.info("PARENT IDS: " + ids);
 
 
 
