@@ -25,8 +25,9 @@ var test = new servicemappingutil();
 var huba = test.list_parents("6f8368f847bbb2902af1179095f63c24");
 gs.info("biz niz: " + huba.toString());
 
-
-
+var tuba = new Set(huba);
+var testing = [...tuba];
+gs.info("testing: " + testing.toString());
 
 //test fetch parent
 //var test = new servicemappingutil();

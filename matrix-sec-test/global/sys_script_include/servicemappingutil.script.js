@@ -157,8 +157,7 @@ servicemappingutil.prototype = {
 //					this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
 //				}
 //				return this.result;
-			}
-
+			};
 
 			if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
 				this.logger.logDebug("Adding parent " + gr.name + " to result array.");
