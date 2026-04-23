@@ -130,6 +130,50 @@ servicemappingutil.prototype = {
 		}
 	},
 
+	list_parents: function(sys_id){
+		var gr = new GlideRecord("cmdb_ci");
+		if(gr.get(sys_id)){
+			//this.logger.logDebug("Current CI name: " + gr.name + " and type: " + gr.getRecordClassName());
+			var gr_rel = new GlideRecord('cmdb_rel_ci');
+			var query = 'child=' + sys_id;
+
+			gr_rel.addEncodedQuery(query);
+			gr_rel.query();
+
+			if(gr_rel.hasNext()){
+				while(gr_rel.next()){
+			//		this.logger.logDebug("Found parent relation for CI with sys_id " + sys_id + ". Parent sys_id: " + gr_rel.parent.sys_id);
+			//		this.logger.logDebug("parent type: " + gr_rel.parent.name);
+			//		this.result.push(gr_rel.parent.toString());
+					this.list_parents(gr_rel.parent);
+				}
+			//	return this.result;
+			}else{
+				//this.logger.logDebug("No more parents found for CI " + gr.name);
+//				if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+//					this.logger.logDebug("Adding parent " + gr.name + " to result array.");
+//					this.result_new.push(sys_id);
+//				}else{
+//					this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
+//				}
+//				return this.result;
+			}
+
+
+			if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+				this.logger.logDebug("Adding parent " + gr.name + " to result array.");
+				this.result.push(sys_id.toString());
+			}else{
+				this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
+			}
+			//return this.result;
+	
+		}else{
+			this.logger.logWarning("Could not find CI record " + gr.name);
+		}
+		return this.result;
+	},
+
 	fetch_parent_new: function(sys_id){
 		//var relations = ["41008aa6ef32010098d5925495c0fb94","1a9cb166f1571100a92eb60da2bce5c5"];
 		this.logger.logDebug("Fetching parent for CI with sys_id " + sys_id);
@@ -146,27 +190,40 @@ servicemappingutil.prototype = {
 				this.logger.logDebug("Found parent relation: " + gr_rel.parent.name);	
 				this.fetch_parent_new(gr_rel.parent);
 		//		this.logger.logDebug("????????????????? Adding parent with sys_id " + gr_rel.parent.sys_id + " to result array.");
-				var gr = new GlideRecord("cmdb_ci");
+			//	var gr = new GlideRecord("cmdb_ci");
 				// this.logger.logDebug("22222222222222222222");
-				if(gr.get(gr_rel.parent.sys_id)){
+			//	if(gr.get(gr_rel.parent.sys_id)){
 					// this.logger.logDebug("333333333333333333");
-					gr.next();
+			//		gr.next();
 					// this.logger.logDebug("44444444444444444444");
 					// cmdb_ci_business_capability cmdb_ci_business_app
-					if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
-						this.logger.logDebug("????????????????? Adding parent with sys_id " + gr_rel.parent.sys_id + " to result array.");
-						this.result_new.push(gr_rel.parent.toString());
-						this.logger.logDebug("&&&&&&&&&&&&&&&&&&&&&&& Parent record type: " + gr.getRecordClassName());					
-					}else{
+			//		if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+//						this.logger.logDebug("????????????????? Adding parent with sys_id " + gr_rel.parent.sys_id + " to result array.");
+			//			this.result_new.push(gr_rel.parent.toString());
+			//			this.logger.logDebug("&&&&&&&&&&&&&&&&&&&&&&& Parent record type: " + gr.getRecordClassName());					
+			//		}else{
 						// this.logger.logDebug("55555555555555555555");
-					}
-				}else{
-					this.logger.logDebug("EEEEEEEEEEEEEEEEEEEEEElse ");
-				}
-			this.logger.logDebug("************* Result: " + this.result_new);
+			//		}
+			//	}else{
+			//		this.logger.logDebug("EEEEEEEEEEEEEEEEEEEEEElse ");
+			//	}
+			//this.logger.logDebug("************* Result: " + this.result_new);
 			}
 		}else{
-			this.logger.logDebug("############ No more parents found for CI with sys_id " + sys_id);
+			var gr = new GlideRecord("cmdb_ci");
+			if(gr.get(sys_id)){
+				this.logger.logDebug("No more parents found for CI with sys_id " + sys_id + ". Current CI name: " + gr.name + " and type: " + gr.getRecordClassName());
+				if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+					this.logger.logDebug("Adding parent " + gr.name + " to result array.");
+					this.result_new.push(sys_id);
+				}else{
+					this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
+				}
+			}else{
+				this.logger.logWarning("Could not find CI record with sys_id " + sys_id);
+			}
+			//this.logger.logDebug("############ No more parents found for CI with sys_id " + sys_id);
+			//this.logger.logDebug("????????????????? Adding parent with sys_id " + gr_rel.parent.sys_id + " to result array.");
 		}
 
 		this.logger.logDebug("22222222222222222222 Result: " + this.result_new);

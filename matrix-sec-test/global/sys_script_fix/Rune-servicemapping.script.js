@@ -22,8 +22,8 @@
 //test fetch parent new
 
 var test = new servicemappingutil();
-test.fetch_parent_new("6f8368f847bbb2902af1179095f63c24");
-
+var huba = test.list_parents("6f8368f847bbb2902af1179095f63c24");
+gs.info("biz niz: " + huba.toString());
 
 
 
