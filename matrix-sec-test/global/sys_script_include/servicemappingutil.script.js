@@ -117,12 +117,11 @@ servicemappingutil.prototype = {
 			gr_rel.addEncodedQuery(query);
 			gr_rel.query();
 
-
 			if(gr_rel.hasNext()){
 				while(gr_rel.next()){
 					this.logger.logDebug("Found parent relation for CI with sys_id " + sys_id + ". Parent sys_id: " + gr_rel.parent.sys_id);
 					//found parent, recursively call the function with the parent sys_id to find more parents
-					this.list_parents(gr_rel.parent);
+					this.fetch_parents(gr_rel.parent);
 				}
 			}else{
 				this.logger.logDebug("No more parents found for CI " + gr.name);
@@ -135,10 +134,15 @@ servicemappingutil.prototype = {
 				this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
 			}
 			//return this.result;
-	
 		}else{
 			this.logger.logWarning("Could not find CI record " + gr.name);
 		}
+
+		//remove duplicates from result array
+		this.logger.logDebug("Removing duplicates from result array. " + this.result);
+		var unique_result = new Set(this.result);
+		this.result = [...unique_result];
+		this.logger.logDebug("Result array after removing duplicates: " + this.result);
 		return this.result;
 	},
 
