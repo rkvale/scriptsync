@@ -17,10 +17,16 @@
 //	gs.info("found a business application");
 //}
 
-//test fetch parent new
+
 var test = new servicemappingutil();
-var huba = test.fetch_parents("6f8368f847bbb2902af1179095f63c24");
-gs.info("biz niz: " + huba.toString());
+
+//test get affected CIs
+test.get_affected_cis("7498bf050518c7103b3c54417919dc6a");
+
+
+//test fetch parent new
+//var huba = test.fetch_parents("6f8368f847bbb2902af1179095f63c24");
+//gs.info("biz niz: " + huba.toString());
 
 //test fetch parent
 //var test = new servicemappingutil();

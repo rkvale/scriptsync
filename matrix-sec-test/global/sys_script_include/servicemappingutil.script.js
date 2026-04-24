@@ -102,14 +102,36 @@ servicemappingutil.prototype = {
 	},
 
 	/**
+	 * get all affected CIs for a given Change Request
+	 * @param {*} change_sysid 
+	 * @return array of sysid of affected CIs
+	 */
+	get_affected_cis: function(change_sysid){
+		this.logger.logDebug("Getting affected CIs for change request with sysid " + change_sysid);
+		var affected_query = "task.sys_idSTARTSWITH" + change_sysid;
+		this.logger.logDebug("Encoded query for affected CIs: " + affected_query);
+		var gr = new GlideRecord("task_ci");
+		gr.addEncodedQuery(affected_query);
+		gr.query();
+		var count = 0;
+		while(gr.next()){
+			this.logger.logDebug("Found affected CI with sysid " + gr.ci_item);
+			this.services.push(gr.child.sys_id.toString());
+			count++;
+		}
+		this.logger.logDebug("Total number of affected CIs found: " + count);
+		return this.services;
+	},
+
+	/**
 	* find all parent with a given relations to the CI provided
 	*
 	* @param {string} sys_id - cmdb_ci sys_id 
-	* @return {array} something - holds sys_id to all parents
+	* @return {array} this.result - holds sys_id to all parent business application and business capabilities
 	*/
 	fetch_parents: function(sys_id){
 		var gr = new GlideRecord("cmdb_ci");
-		// sys_class_name=cmdb_ci_business_app^ORsys_class_name=cmdb_ci_business_capability
+
 		if(gr.get(sys_id)){
 			this.logger.logDebug("Current CI name: " + gr.name + " and type: " + gr.getRecordClassName());
 			var gr_rel = new GlideRecord('cmdb_rel_ci');
@@ -128,7 +150,8 @@ servicemappingutil.prototype = {
 				this.logger.logDebug("No more parents found for CI " + gr.name);
 			};
 			//check if the found parent is of type business application or business capability, if yes add to result array
-			if(gr.getRecordClassName() === "cmdb_ci_business_capability" || gr.getRecordClassName() === "cmdb_ci_business_app"){
+//			if(gr.getRecordClassName() === "cmdb_ci_business_capability" || gr.getRecordClassName() === "cmdb_ci_business_app"){
+			if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
 				this.logger.logDebug("Adding parent " + gr.name + " to result array.");
 				this.result.push(sys_id.toString());
 			}else{
