@@ -109,6 +109,7 @@ servicemappingutil.prototype = {
 	*/
 	fetch_parents: function(sys_id){
 		var gr = new GlideRecord("cmdb_ci");
+		// sys_class_name=cmdb_ci_business_app^ORsys_class_name=cmdb_ci_business_capability
 		if(gr.get(sys_id)){
 			this.logger.logDebug("Current CI name: " + gr.name + " and type: " + gr.getRecordClassName());
 			var gr_rel = new GlideRecord('cmdb_rel_ci');
@@ -126,14 +127,13 @@ servicemappingutil.prototype = {
 			}else{
 				this.logger.logDebug("No more parents found for CI " + gr.name);
 			};
-
-			if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+			//check if the found parent is of type business application or business capability, if yes add to result array
+			if(gr.getRecordClassName() === "cmdb_ci_business_capability" || gr.getRecordClassName() === "cmdb_ci_business_app"){
 				this.logger.logDebug("Adding parent " + gr.name + " to result array.");
 				this.result.push(sys_id.toString());
 			}else{
 				this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
 			}
-			//return this.result;
 		}else{
 			this.logger.logWarning("Could not find CI record " + gr.name);
 		}

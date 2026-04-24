@@ -18,7 +18,6 @@
 //}
 
 //test fetch parent new
-
 var test = new servicemappingutil();
 var huba = test.fetch_parents("6f8368f847bbb2902af1179095f63c24");
 gs.info("biz niz: " + huba.toString());
