@@ -8,9 +8,10 @@ servicemappingutil.prototype = {
 		this.logger.logDebug("Initializing");	
 
 		this.relations = ['60bc4e22c0a8010e01f074cbe6bd73c3','1a9cb166f1571100a92eb60da2bce5c5']; //Runs::on, Depends::on
-		this.services = [];
+		this.services = []; //result array for 
+		this.affected_cis = []; //result array for affected CIs from change request
+		this.impacted_services = []; //result array for impacted services from change request
 		this.result = [];
-		this.result_new = [];
 
 		//If the log level property does no exists we create it
 		if(!gs.getProperty(logLevelPropertyName)){
@@ -103,7 +104,7 @@ servicemappingutil.prototype = {
 
 	/**
 	 * get all affected CIs for a given Change Request
-	 * @param {*} change_sysid 
+	 * @param {*} change_sysid - sysid for the change request you want to get affected CIs for
 	 * @return array of sysid of affected CIs
 	 */
 	get_affected_cis: function(change_sysid){
@@ -113,15 +114,34 @@ servicemappingutil.prototype = {
 		var gr = new GlideRecord("task_ci");
 		gr.addEncodedQuery(affected_query);
 		gr.query();
-		var count = 0;
 		while(gr.next()){
 			this.logger.logDebug("Found affected CI with sysid " + gr.ci_item);
-			this.services.push(gr.child.sys_id.toString());
-			count++;
+			this.affected_cis.push(gr.ci_item);
 		}
-		this.logger.logDebug("Total number of affected CIs found: " + count);
-		return this.services;
+		this.logger.logDebug("Affected CIs:	 " + this.affected_cis);
+		return this.affected_cis;
 	},
+
+	/**
+	 * get all impacted business capabilities for a given change request.
+	 * @param {*} change_sysid 
+	 * @return array of sysid for affected services
+	 */
+	get_impacted_services: function(change_sysid){
+		this.logger.logDebug("Getting impacted services for change request with sysid " + change_sysid);
+		var gr_task_biz_cap = new GlideRecord("task_cmdb_ci_service");
+		var impacted_query = "task.sys_idSTARTSWITH" + change_sysid;
+		this.logger.logDebug("Encoded query for impacted services: " + impacted_query);
+		gr_task_biz_cap.addEncodedQuery(impacted_query);
+		gr_task_biz_cap.query();
+		while(gr_task_biz_cap.next()){
+			this.logger.logDebug("Found impacted service with sysid " + gr_task_biz_cap.cmdb_ci_service);
+		}
+	},
+
+
+
+
 
 	/**
 	* find all parent with a given relations to the CI provided
@@ -150,7 +170,8 @@ servicemappingutil.prototype = {
 				this.logger.logDebug("No more parents found for CI " + gr.name);
 			};
 			//check if the found parent is of type business application or business capability, if yes add to result array
-//			if(gr.getRecordClassName() === "cmdb_ci_business_capability" || gr.getRecordClassName() === "cmdb_ci_business_app"){
+			//if(gr.getRecordClassName() === "cmdb_ci_business_capability" || gr.getRecordClassName() === "cmdb_ci_business_app"){
+			//check if the found parent is of type business application, if yes add to result array
 			if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
 				this.logger.logDebug("Adding parent " + gr.name + " to result array.");
 				this.result.push(sys_id.toString());

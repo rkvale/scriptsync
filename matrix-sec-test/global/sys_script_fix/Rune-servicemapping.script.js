@@ -6,6 +6,21 @@
 //var sysids = ["2e08ffe575f7b29052321174bdc26924", "6a08ffe572f7b290bce6230ec87a0924", "6608ffe552f7b290c529dc5131361422"];
 //test.create_neighbors(sysids);
 
+//testing array differences
+var arr1 = ["a", "b", "c", "d"];
+var arr2 = ["c", "d", "e", "f"];
+
+var diff1 = arr1.filter(x => !arr2.includes(x));
+var diff2 = arr2.filter(x => !arr1.includes(x));
+gs.info("Difference between arr1 and arr2: " + diff1.toString());	
+gs.info("Difference between arr2 and arr1: " + diff2.toString());	
+
+
+
+const res1 = Array.from(arr1).filter((num) => !arr2.includes(num));
+const res2 = Array.from(arr2).filter((num) => !arr1.includes(num));
+gs.info("Difference between arr1 and arr2: " + res1.toString());
+gs.info("Difference between arr2 and arr1: " + res2.toString());
 
 // test gliderecord
 //var gr = new GlideRecord("cmdb_ci");
@@ -22,7 +37,7 @@ var test = new servicemappingutil();
 
 //test get affected CIs
 test.get_affected_cis("7498bf050518c7103b3c54417919dc6a");
-
+test.get_impacted_services("7498bf050518c7103b3c54417919dc6a");
 
 //test fetch parent new
 //var huba = test.fetch_parents("6f8368f847bbb2902af1179095f63c24");
