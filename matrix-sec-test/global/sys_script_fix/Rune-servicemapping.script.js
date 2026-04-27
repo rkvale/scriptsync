@@ -54,11 +54,10 @@ if (cis.length > 0){
 	var impacted_services = test.get_business_applications(change_id);
 	gs.info("Impacted business applications: " + impacted_services.toString());
 
-
 	var diff = Array.from(parents).filter((num) => !impacted_services.includes(num));
 	gs.info("Business applications to be added to the change:" + diff.toString());
 
-
+	this.test.create_impacted(diff,change_id);
 
 }else{
 	gs.info("no affected CIs found");

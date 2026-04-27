@@ -32,7 +32,7 @@ servicemappingutil.prototype = {
 	/**
 	 * Create relations between two CIs(switches) based on device neighbors
 	 * The sysid are sysid to neighbor record in discovery_device_neighbors table
-	 * @param {*} arr_sysids 
+	 * @param {*} arr_sysids 	
 	 */
 	create_neighbors: function(arr_sysids){
 		this.logger.logDebug("creating neighbors for the following neighbor record sysid: " + arr_sysids.length + arr_sysids.toString());
@@ -97,7 +97,29 @@ servicemappingutil.prototype = {
 		};
 
 	},
+
+	/**
+	 * Add impacted biz_app/biz_cap to change
+	 * arr_sysids are sysid for business applications/capabilities to be added to the change request
+	 * chg_id is the sysid for the change request
+	 * @param {*} arr_sysids 
+	 * @param {*} chg_id
+	 * 
+	 * @return ett eller annet
+	 */
+	create_impacted: function(arr_sysids, chg_id){
+		for (const sysid of arr_sysids){
+			var gr = new GlideRecord("task_cmdb_ci_business_app");
+			gr.initialize();
+			gr.task = chg_id;
+			gr.business_application = sysid;
+			var impacted_sysid = gr.insert();
+			this.logger.logDebug("Created impacted business application relation with sysid " + impacted_sysid + " for change request with sysid " + chg_id);
+		}	
 	
+	
+	},
+
 	//not finished yet :-)
 	create_type_query: function(rels){
 		this.logger.logDebug("To be contunied...");
