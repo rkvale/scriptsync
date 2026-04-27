@@ -11,6 +11,7 @@ servicemappingutil.prototype = {
 		this.services = []; //result array for 
 		this.affected_cis = []; //result array for affected CIs from change request
 		this.impacted_services = []; //result array for impacted services from change request
+		this.biz_app = []; //result array for business applications
 		this.result = [];
 
 		//If the log level property does no exists we create it
@@ -114,9 +115,10 @@ servicemappingutil.prototype = {
 		var gr = new GlideRecord("task_ci");
 		gr.addEncodedQuery(affected_query);
 		gr.query();
+		
 		while(gr.next()){
 			this.logger.logDebug("Found affected CI with sysid " + gr.ci_item);
-			this.affected_cis.push(gr.ci_item);
+			this.affected_cis.push(gr.ci_item.toString());
 		}
 		this.logger.logDebug("Affected CIs:	 " + this.affected_cis);
 		return this.affected_cis;
@@ -129,7 +131,7 @@ servicemappingutil.prototype = {
 	 */
 	get_impacted_services: function(change_sysid){
 		this.logger.logDebug("Getting impacted services for change request with sysid " + change_sysid);
-		var gr_task_biz_cap = new GlideRecord("task_cmdb_ci_service");
+		var gr_task_biz_cap = new GlideRecord("task_cmdb_ci_business_app");
 		var impacted_query = "task.sys_idSTARTSWITH" + change_sysid;
 		this.logger.logDebug("Encoded query for impacted services: " + impacted_query);
 		gr_task_biz_cap.addEncodedQuery(impacted_query);
@@ -140,7 +142,24 @@ servicemappingutil.prototype = {
 	},
 
 
-
+	/**
+	 * get all impacted business applications for a given change request.
+	 * @param {*} change_sysid 
+	 * @return array of sysid for affected business applications
+	 */
+	get_business_applications: function(change_sysid){
+		this.logger.logDebug("Getting businnes applications for change request with sysid " + change_sysid);
+		var gr_task_biz_app = new GlideRecord("task_cmdb_ci_business_app");
+		var impacted_query = "task.sys_idSTARTSWITH" + change_sysid;
+		this.logger.logDebug("Encoded query for impacted services: " + impacted_query);
+		gr_task_biz_app.addEncodedQuery(impacted_query);
+		gr_task_biz_app.query();
+		while(gr_task_biz_app.next()){
+			this.logger.logDebug("Found business application with sysid " + gr_task_biz_app.business_application);
+			this.biz_app.push(gr_task_biz_app.business_application.toString());
+		}
+		return this.biz_app;
+	},
 
 
 	/**
@@ -172,21 +191,25 @@ servicemappingutil.prototype = {
 			//check if the found parent is of type business application or business capability, if yes add to result array
 			//if(gr.getRecordClassName() === "cmdb_ci_business_capability" || gr.getRecordClassName() === "cmdb_ci_business_app"){
 			//check if the found parent is of type business application, if yes add to result array
-			if(gr.getRecordClassName() === "cmdb_ci_business_capability"){
+			if(gr.getRecordClassName() === "cmdb_ci_business_app"){
 				this.logger.logDebug("Adding parent " + gr.name + " to result array.");
 				this.result.push(sys_id.toString());
 			}else{
-				this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_capability. Not adding to result array.");
+				this.logger.logDebug("Parent with " + gr.name + " is not of type cmdb_ci_business_application. Not adding to result array.");
 			}
 		}else{
 			this.logger.logWarning("Could not find CI record " + gr.name);
 		}
 
 		//remove duplicates from result array
-		this.logger.logDebug("Removing duplicates from result array. " + this.result);
-		var unique_result = new Set(this.result);
-		this.result = [...unique_result];
-		this.logger.logDebug("Result array after removing duplicates: " + this.result);
+		if(this.result.length > 0){
+			this.logger.logDebug("Removing duplicates from result array. " + this.result);
+			var unique_result = new Set(this.result);
+			this.result = [...unique_result];
+			this.logger.logDebug("Result array after removing duplicates: " + this.result);
+		}else{
+			this.logger.logDebug("Result array is empty, no duplicates to remove.");
+		}
 		return this.result;
 	},
 
