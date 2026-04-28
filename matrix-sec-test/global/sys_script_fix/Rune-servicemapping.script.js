@@ -33,6 +33,16 @@ const res2 = Array.from(arr2).filter((num) => !arr1.includes(num));
 //	gs.info("found a business application");
 //}
 
+var arr_parent = ["cc2c77bba894cb103b3c28601cd9972b","2ce5c72a7079d2103b3cd555ddc8c6e1","0d84c3a67079d2103b3cd555ddc8c65f","59d5c72a7079d2103b3cd555ddc8c633"];
+var arr_cap = ["0d84c3a67079d2103b3cd555ddc8c65f"];
+//gs.info("typeof :" + typeof arr_parent);
+//gs.info("typeof :" + typeof arr_cap);
+//gs.info("Difference between arr_parent and arr_cap: " + Array.from(arr_parent).filter((num) => !arr_cap.includes(num)).toString());
+
+
+
+
+
 //FULL Test
 var test = new servicemappingutil();
 var change_id = "7498bf050518c7103b3c54417919dc6a";
@@ -51,18 +61,23 @@ if (cis.length > 0){
 	parents = [...unique_parents];
 	gs.info("Parent business applications: " + parents.toString());
 	//get business applications
-	var impacted_services = test.get_business_applications(change_id);
-	gs.info("Impacted business applications: " + impacted_services.toString());
+	try{
+		var impacted_cap = test.get_impacted_cap(change_id,"cap");
+//		gs.info("Impacted business capabilities: " + impacted_cap.toString());
+//		gs.info("typeof impacted_cap: " + typeof impacted_cap);
+// 		gs.info("typeof parents: " + typeof parents);		
+//		gs.info("Difference between arr_parent and arr_cap: " + Array.from(parents).filter((num) => !impacted_cap.includes(num)).toString());
+		var diff = Array.from(parents).filter((num) => !impacted_cap.includes(num));
+		gs.info("Length of impacted business capabilities: " + diff.length);
+		gs.info("Business capabilities to be added to the change:" + diff.toString());
 
-	var diff = Array.from(parents).filter((num) => !impacted_services.includes(num));
-	gs.info("Business applications to be added to the change:" + diff.toString());
-
-	this.test.create_impacted(diff,change_id);
-
+//		test.create_impacted(diff,change_id);
+	}catch(err){
+		gs.info("error: " + err);
+	}
 }else{
 	gs.info("no affected CIs found");
 }
-
 
 
 //test.get_impacted_services("7498bf050518c7103b3c54417919dc6a");
