@@ -1,6 +1,6 @@
 {
-  "timestamp": 1776835952655,
-  "time": "2026-04-22T05:32:32.655Z",
+  "timestamp": 1777478411449,
+  "time": "2026-04-29T16:00:11.449Z",
   "error": "Could not sync file, no valid token. Try typing the slashcommand /token in a active browser session and retry.",
   "details": {
     "detail": "Required to provide Auth information",

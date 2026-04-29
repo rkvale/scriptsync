@@ -6,6 +6,7 @@
 //var sysids = ["2e08ffe575f7b29052321174bdc26924", "6a08ffe572f7b290bce6230ec87a0924", "6608ffe552f7b290c529dc5131361422"];
 //test.create_neighbors(sysids);
 
+//test
 
 //testing array differences
 var arr1 = ["a", "b", "c", "d"];
@@ -48,6 +49,7 @@ if(gr_cap.hasNext()){
 }else{
 	gs.info("no impacted caps found for change request with sysid 7498bf050518c7103b3c54417919dc6a");
 }
+
 
 
 //FULL Test
