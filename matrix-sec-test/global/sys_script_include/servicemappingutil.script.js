@@ -109,16 +109,34 @@ servicemappingutil.prototype = {
 	 */
 	create_impacted: function(arr_sysids, chg_id){
 		var unique_result = new Set(arr_sysids);
-		arr_sysids = [...unique_result];
-	
-		for (const sysid of arr_sysids){
-			var gr = new GlideRecord("u_task_cmdb_ci_business_cap");
-			gr.initialize();
-			gr.u_task = chg_id;
-			gr.u_business_capability = sysid;
-			var impacted_sysid = gr.insert();
-			this.logger.logDebug("Created impacted business capability relation with sysid " + impacted_sysid + " for change request with sysid " + chg_id);
-		}	
+		if(unique_result.size > 0){
+			this.logger.logDebug("Removing duplicates from business capabilities to be added to change request with sysid " + chg_id + ". Business capabilities to be added before removing duplicates: " + arr_sysids.toString());
+			arr_sysids = [...unique_result];
+			this.logger.logDebug("Business capabilities to be added to change request with sysid " + chg_id + " after removing duplicates: " + arr_sysids.toString());
+
+			this.logger.logDebug("Creating impacted business capabilities for change request with sysid " + chg_id + " and the following business capability sysids: " + arr_sysids.toString());
+			for (const sysid of arr_sysids){
+				var gr = new GlideRecord("u_task_cmdb_ci_business_cap");
+				gr.initialize();
+				gr.u_task = chg_id;
+				gr.u_business_capability = sysid;
+				var impacted_sysid = gr.insert();
+				this.logger.logDebug("Created impacted business capability relation with sysid " + impacted_sysid + " for change request with sysid " + chg_id);
+			}	
+		}else{
+			this.logger.logDebug("No business capabilities to be added to change request with sysid " + chg_id + ". The array of business capabilities to be added is empty.");
+		}
+
+		//arr_sysids = [...unique_result];
+//		this.logger.logDebug("Creating impacted business capabilities for change request with sysid " + chg_id + " and the following business capability sysids: " + arr_sysids.toString());
+//		for (const sysid of arr_sysids){
+//			var gr = new GlideRecord("u_task_cmdb_ci_business_cap");
+//			gr.initialize();
+//			gr.u_task = chg_id;
+//			gr.u_business_capability = sysid;
+			//var impacted_sysid = gr.insert();
+			//this.logger.logDebug("Created impacted business capability relation with sysid " + impacted_sysid + " for change request with sysid " + chg_id);
+//		}	
 	
 	
 	},

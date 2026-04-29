@@ -39,8 +39,15 @@ var arr_cap = ["0d84c3a67079d2103b3cd555ddc8c65f"];
 //gs.info("typeof :" + typeof arr_cap);
 //gs.info("Difference between arr_parent and arr_cap: " + Array.from(arr_parent).filter((num) => !arr_cap.includes(num)).toString());
 
-
-
+var gr_cap = new GlideRecord("u_task_cmdb_ci_business_cap");
+gr_cap.addEncodedQuery("u_task=7498bf050518c7103b3c54417919dc6a");
+gr_cap.query();
+if(gr_cap.hasNext()){
+	gs.info("found impacted cap." + gr_cap.getRowCount());
+	//gr_cap.deleteMultiple();
+}else{
+	gs.info("no impacted caps found for change request with sysid 7498bf050518c7103b3c54417919dc6a");
+}
 
 
 //FULL Test
@@ -58,20 +65,22 @@ if (cis.length > 0){
 	}
 	//remove duplicates from parents array
 	var unique_parents = new Set(parents.flat());
-	parents = [...unique_parents];
-	gs.info("Parent business applications: " + parents.toString());
+	if(unique_parents.size > 0){
+		parents = [...unique_parents];
+		gs.info("Parent business applications: " + parents.toString());
+	}else{
+		throw new Error("No parent business applications found for the affected CIs.");
+	}
 	//get business applications
 	try{
 		var impacted_cap = test.get_impacted_cap(change_id,"cap");
-//		gs.info("Impacted business capabilities: " + impacted_cap.toString());
-//		gs.info("typeof impacted_cap: " + typeof impacted_cap);
-// 		gs.info("typeof parents: " + typeof parents);		
-//		gs.info("Difference between arr_parent and arr_cap: " + Array.from(parents).filter((num) => !impacted_cap.includes(num)).toString());
 		var diff = Array.from(parents).filter((num) => !impacted_cap.includes(num));
-		gs.info("Length of impacted business capabilities: " + diff.length);
-		gs.info("Business capabilities to be added to the change:" + diff.toString());
-
-//		test.create_impacted(diff,change_id);
+			//gs.info("Length of impacted business capabilities: " + diff.length);
+		//gs.info("Business capabilities to be added to the change:" + diff.toString());
+		//gs.info("typeof diff: " + typeof diff);
+		//gs.info("diff string: " + diff.toString());
+		//gs.info("diff: " + diff);
+		test.create_impacted(diff,change_id);
 	}catch(err){
 		gs.info("error: " + err);
 	}
