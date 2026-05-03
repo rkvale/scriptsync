@@ -222,14 +222,19 @@ servicemappingutil.prototype = {
 	* @param {string} sys_id - cmdb_ci sys_id 
 	* @return {array} this.result - holds sys_id to all parent business application and business capabilities
 	*/
-	fetch_parents: function(sys_id){
+	fetch_parents: function(sys_id, org_id){
 		var gr = new GlideRecord("cmdb_ci");
+
+		if(org_id === undefined || org_id === null || org_id === ""){
+			org_id = sys_id;
+		}
 
 		if(gr.get(sys_id)){
 			this.logger.logDebug("Current CI name: " + gr.name + " and type: " + gr.getRecordClassName());
 			var gr_rel = new GlideRecord('cmdb_rel_ci');
-			var query = 'child=' + sys_id;
-
+			//var query = 'child=' + sys_id;
+			// new improved query to avoid circular reference and infinite loop in case of circular reference in the CI relationships. The query will find all parents of the current CI but will exclude the original CI from the parent side of the relation. This way if there is a circular reference the function will not get stuck in an infinite loop as it will not consider the original CI as a parent of itself.
+			var query = 'child.sys_id=' + sys_id + '^parent.sys_id!=' + org_id;
 			gr_rel.addEncodedQuery(query);
 			gr_rel.query();
 
@@ -237,7 +242,7 @@ servicemappingutil.prototype = {
 				while(gr_rel.next()){
 					this.logger.logDebug("Found parent relation for CI with sys_id " + sys_id + ". Parent sys_id: " + gr_rel.parent.sys_id);
 					//found parent, recursively call the function with the parent sys_id to find more parents
-					this.fetch_parents(gr_rel.parent);
+					this.fetch_parents(gr_rel.parent, sys_id);
 				}
 			}else{
 				this.logger.logDebug("No more parents found for CI " + gr.name);

@@ -1,3 +1,30 @@
+//create an event
+var gr = new GlideRecord("change_request");
+var chg_id = "7498bf050518c7103b3c54417919dc6a";
+
+if(gr.get(chg_id)){
+//	new TaskUtils().triggerRefreshImpactedServices(gr);
+
+	gs.info("found change");
+	var ciu = new CIUtils();
+	var services = ciu._getImpactedServicesFromAffectedCIs(chg_id);
+	
+	var task = new TaskBusinessAppSNC();
+	var businessApps = task.getBusinessAppsImpactedByServices(services);
+
+	gs.eventQueue("refresh_imp_capabilities_service",gr,"delete","");
+	var chgutil = new ChangeUtils();
+//	var services = chgutil.GlideRecordetImpactedServicesFromAffectedCIs(chg_id,"");
+	gs.info("impacted services: " + services.toString());
+	gs.info("impacted applications: " + businessApps.toString());
+}else{
+	gs.info("could not find change");
+}
+
+
+//940aa2f2c9306410eb3fab42ed684952
+
+
 //var test = new servicemappingutil();
 //var sysids = ["69e4ee61df837650f6b69e16c11e260d","2de4ee612883765038ac5e53f4c0bf0d","38ff7ac7fc93d550eb3f785274505230","0e89e536dd01e1d4eb3f744d6cffcaf4"];
 //test.create_neighbors(sysids);
@@ -9,18 +36,18 @@
 //test
 
 //testing array differences
-var arr1 = ["a", "b", "c", "d"];
-var arr2 = ["c"];
+// var arr1 = ["a", "b", "c", "d"];
+// var arr2 = ["c"];
 
-var diff1 = arr1.filter(x => !arr2.includes(x));
-var diff2 = arr2.filter(x => !arr1.includes(x));
+// var diff1 = arr1.filter(x => !arr2.includes(x));
+// var diff2 = arr2.filter(x => !arr1.includes(x));
 //gs.info("Difference between arr1 and arr2: " + diff1.toString());	
 //gs.info("Difference between arr2 and arr1: " + diff2.toString());	
 
 
 
-const res1 = Array.from(arr1).filter((num) => !arr2.includes(num));
-const res2 = Array.from(arr2).filter((num) => !arr1.includes(num));
+// const res1 = Array.from(arr1).filter((num) => !arr2.includes(num));
+// const res2 = Array.from(arr2).filter((num) => !arr1.includes(num));
 //gs.info("Difference between arr1 and arr2: " + res1.toString());
 //gs.info("Difference between arr2 and arr1: " + res2.toString());
 
@@ -34,21 +61,21 @@ const res2 = Array.from(arr2).filter((num) => !arr1.includes(num));
 //	gs.info("found a business application");
 //}
 
-var arr_parent = ["cc2c77bba894cb103b3c28601cd9972b","2ce5c72a7079d2103b3cd555ddc8c6e1","0d84c3a67079d2103b3cd555ddc8c65f","59d5c72a7079d2103b3cd555ddc8c633"];
-var arr_cap = ["0d84c3a67079d2103b3cd555ddc8c65f"];
+// var arr_parent = ["cc2c77bba894cb103b3c28601cd9972b","2ce5c72a7079d2103b3cd555ddc8c6e1","0d84c3a67079d2103b3cd555ddc8c65f","59d5c72a7079d2103b3cd555ddc8c633"];
+// var arr_cap = ["0d84c3a67079d2103b3cd555ddc8c65f"];
 //gs.info("typeof :" + typeof arr_parent);
 //gs.info("typeof :" + typeof arr_cap);
 //gs.info("Difference between arr_parent and arr_cap: " + Array.from(arr_parent).filter((num) => !arr_cap.includes(num)).toString());
 
-var gr_cap = new GlideRecord("u_task_cmdb_ci_business_cap");
-gr_cap.addEncodedQuery("u_task=7498bf050518c7103b3c54417919dc6a");
-gr_cap.query();
-if(gr_cap.hasNext()){
-	gs.info("found impacted cap." + gr_cap.getRowCount());
-	//gr_cap.deleteMultiple();
-}else{
-	gs.info("no impacted caps found for change request with sysid 7498bf050518c7103b3c54417919dc6a");
-}
+// var gr_cap = new GlideRecord("u_task_cmdb_ci_business_cap");
+// gr_cap.addEncodedQuery("u_task=7498bf050518c7103b3c54417919dc6a");
+// gr_cap.query();
+// if(gr_cap.hasNext()){
+// 	gs.info("found impacted cap." + gr_cap.getRowCount());
+// 	//gr_cap.deleteMultiple();
+// }else{
+// 	gs.info("no impacted caps found for change request with sysid 7498bf050518c7103b3c54417919dc6a");
+// }
 
 
 
@@ -57,7 +84,7 @@ var test = new servicemappingutil();
 var change_id = "7498bf050518c7103b3c54417919dc6a";
 
 var cis = test.get_affected_cis(change_id);
-//var cis = [];
+var cis = [];
 if (cis.length > 0){
 	var parents = [];
 	gs.info("affected CIs: " + cis.toString());
@@ -87,7 +114,7 @@ if (cis.length > 0){
 		gs.info("error: " + err);
 	}
 }else{
-	gs.info("no affected CIs found");
+//	gs.info("no affected CIs found");
 }
 
 

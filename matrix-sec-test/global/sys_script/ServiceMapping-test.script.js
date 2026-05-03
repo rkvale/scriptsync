@@ -31,7 +31,7 @@
 			logger.logDebug("affected CIs: " + cis.toString());
 			for(const ci of cis){
 				logger.logDebug("CI: " + ci);
-				parents.push(util.fetch_parents(ci));
+				parents.push(util.fetch_parents(ci, ci));
 			}
 			//remove duplicates from parents array
 			var unique_parents = new Set(parents.flat());
@@ -58,7 +58,7 @@
 
 			for(const ci of cis){
 				logger.logDebug("CI: " + ci);
-				parents.push(util.fetch_parents(ci));
+				parents.push(util.fetch_parents(ci, ci));
 			}
 			//remove duplicates from parents array
 			var unique_parents = new Set(parents.flat());
@@ -81,7 +81,7 @@
 			}*/
 		}else{
 			logger.logDebug("no affected CIs found");
-			parents.push(util.fetch_parents(current.ci_item.sys_id));
+			parents.push(util.fetch_parents(current.ci_item.sys_id, current.ci_item.sys_id));
 			logger.logDebug("Parents of the CI " + current.ci_item.sys_id + ": " + parents.toString());
 			var unique_parents = new Set(parents.flat());
 			if(unique_parents.size > 0){
