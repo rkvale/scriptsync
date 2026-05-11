@@ -1,12 +1,4 @@
-var ip = "10.226.218.130";
-var subnet = "10.226.218.0/28";
-
-//var mask = oxFFFFFFFF << (32 - parseInt(subnet.split("/")[1]));
-var subnet_ip = subnet.split("/")[0];
-var mask = subnet.split("/")[1];
-
-var ip_num = ipToInt(ip);
-gs.info("ip_num: " + ip_num);
+var ips = ["10.226.218.130", "10.226.218.133", "10.226.218.140", "10.226.222.145"];
 
 function ipToInt(ip) {
 	return ip.split('.').reduce(function (ipInt, octet) {
@@ -28,29 +20,27 @@ function cidrToRange(cidr) {
 }
 
 
+for (const ip of ips){
+	var octets = ip.split('.').map(Number);
+	var query = "network_ipSTARTSWITH" + octets[0] + "." + octets[1] + "." + octets[2];
+	var ip_num = ipToInt(ip);
+	var ip_ranges = new GlideRecord("discovery_range_item");
 
-var range = cidrToRange(subnet);
-gs.info("range start: " + range.start);
-gs.info("range end: " + range.end);
+//	ip_ranges.addEncodedQuery("network_ipSTARTSWITH10.226.218");
+	ip_ranges.addEncodedQuery(query);
+	ip_ranges.query();
 
-//network_ipSTARTSWITH10.226.218
-
-var ip_ranges = new GlideRecord("discovery_range_item");
-ip_ranges.addEncodedQuery("network_ipSTARTSWITH10.226.218");
-ip_ranges.query();
-while (ip_ranges.next()) {
-	//gs.info("found ip range: " + ip_ranges.network_ip);
-	//gs.info("mask " + ip_ranges.netmask);
-	var cidr = ip_ranges.network_ip.toString() + "/" + ip_ranges.netmask.toString();
-	gs.info("cidr: " + cidr);
-	var range = cidrToRange(cidr);
-	if (ip_num >= range.start && ip_num <= range.end) {
-		gs.info("IP address " + ip + " is within the subnet " + subnet);
-	} else {
-		//gs.info("IP address " + ip + " is NOT within the subnet " + subnet);
+	while (ip_ranges.next()) {
+		var cidr = ip_ranges.network_ip.toString() + "/" + ip_ranges.netmask.toString();
+///		gs.info("cidr: " + cidr);
+		var range = cidrToRange(cidr);
+		if (ip_num >= range.start && ip_num <= range.end) {
+			gs.info("IP address " + ip + " is within the subnet " + cidr);
+		} else {
+			//gs.info("IP address " + ip + " is NOT within the subnet " + subnet);
+		}
 	}
 }
-
 
 
 
