@@ -54,6 +54,8 @@ while (ip_ranges.next()) {
 
 
 
+
+
 //create an event
 var gr = new GlideRecord("change_request");
 var chg_id = "7498bf050518c7103b3c54417919dc6a";
