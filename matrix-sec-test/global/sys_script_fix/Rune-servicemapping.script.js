@@ -44,16 +44,14 @@ for (const ip of ips){
 
 
 
+
+
 for (const ip of ips){
 	if(isValidIPv4(ip)){
 		gs.info("valid ip: " + ip);
 	}else{
 		gs.info("invalid ip: " + ip);
 	}
-
-
-
-
 
 	//var res = isIpInSubnet("10.0.1.150","10.0.1.0/28");
 	//gs.info("result: " + res);
