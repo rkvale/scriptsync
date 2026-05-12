@@ -44,6 +44,39 @@ for (const ip of ips){
 
 
 
+for (const ip of ips){
+	if(isValidIPv4(ip)){
+		gs.info("valid ip: " + ip);
+	}else{
+		gs.info("invalid ip: " + ip);
+	}
+
+
+
+
+
+	//var res = isIpInSubnet("10.0.1.150","10.0.1.0/28");
+	//gs.info("result: " + res);
+
+}
+
+
+function isIpInSubnet(ip, cidr) {
+  const [subnetIp, prefixLength] = cidr.split("/");
+  const prefix = parseInt(prefixLength, 10);
+
+  const ipToInt = (ipStr) =>
+    ipStr
+      .split(".")
+      .reduce((acc, octet) => (acc << 8) | parseInt(octet, 10), 0) >>> 0;
+
+  const ipInt = ipToInt(ip);
+  const subnetInt = ipToInt(subnetIp);
+  const mask = prefix === 0 ? 0 : (~0 << (32 - prefix)) >>> 0;
+
+  return (ipInt & mask) === (subnetInt & mask);
+}
+
 
 
 //create an event
