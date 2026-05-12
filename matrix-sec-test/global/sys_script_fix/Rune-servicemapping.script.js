@@ -1,4 +1,5 @@
 var ips = ["10.226.218.130", "10.226.218.133", "10.226.218.140", "10.226.222.145"];
+ips = [];
 
 function ipToInt(ip) {
 	return ip.split('.').reduce(function (ipInt, octet) {
@@ -45,17 +46,73 @@ for (const ip of ips){
 
 
 
+ips = ["10.226.36.36", "10.226.212.20", "10.226.204.52", "10.226.98.52", "10.226.34.140", "10.226.106.44", "10.226.96.44", "10.226.36.68", "10.226.36.69", "10.226.36.70", "10.226.37.84", "10.226.37.85", "10.226.37.86", "10.226.212.65", "10.226.212.66", "10.226.212.67", "10.226.214.84", "10.226.214.85", "10.226.214.86", "10.226.105.36", "10.226.105.37", "10.226.105.38", "10.226.204.84", "10.226.204.85", "10.226.204.86", "10.226.98.36", "10.226.98.37", "10.226.98.38", "10.226.98.84", "10.226.98.85", "10.226.98.86", "10.226.34.148", "10.226.34.149", "10.226.34.150", "10.226.34.164", "10.226.34.165", "10.226.34.166", "10.226.106.52", "10.226.106.53", "10.226.106.54", "10.226.106.68", "10.226.106.69", "10.226.106.70", "10.226.96.52", "10.226.96.53", "10.226.96.54", "10.226.96.84", "10.226.96.85", "10.226.96.86", "10.226.36.140", "10.226.36.141", "10.226.212.12", "10.226.212.13", "10.226.105.132", "10.226.105.133", "10.226.98.60", "10.226.98.61", "10.226.36.52", "10.226.36.53", "10.226.212.52", "10.226.212.53", "10.226.105.148", "10.226.105.149", "10.226.37.196", "10.226.37.197", "10.226.107.196", "10.226.107.197", "10.226.96.196", "10.226.96.197", "10.7.76.36", "10.7.76.37", "10.7.77.6", "10.7.77.7", "10.7.76.20", "10.7.76.21", "10.7.76.38", "10.7.76.39", "10.7.77.8", "10.7.77.9", "10.7.76.22", "10.7.76.23", "10.7.73.28", "10.7.73.29", "10.7.77.4", "10.7.77.5", "10.7.73.36", "10.7.73.37", "10.226.32.34", "10.226.32.35", "10.226.32.36", "10.226.32.37", "10.226.213.84", "10.226.213.85", "10.226.213.86", "10.226.213.87", "10.226.204.148", "10.226.204.149", "10.226.204.150", "10.226.204.151", "10.226.36.100", "10.226.36.101", "10.226.36.102", "10.226.36.103", "10.226.204.68", "10.226.204.69", "10.226.204.70", "10.226.204.71"];
+var subnets = [];
+var ips_without_subnet = [];
+const seen = new Set();
+
 
 for (const ip of ips){
-	if(isValidIPv4(ip)){
+	if (isValidIPv4(ip)){
+		if (seen.has(ip)) {
+			gs.info("Duplicate IP found: " + ip);
+			continue;
+		}
+		seen.add(ip);
+
+		var temp_subnets = [];
 		gs.info("valid ip: " + ip);
-	}else{
-		gs.info("invalid ip: " + ip);
+		var octets = ip.split('.').map(Number);
+		var query = "network_ipSTARTSWITH" + octets[0] + "." + octets[1] + "." + octets[2] + ".";
+		var ip_ranges = new GlideRecord("discovery_range_item");
+
+		ip_ranges.addEncodedQuery(query);
+		ip_ranges.query();
+
+		while (ip_ranges.next()) {
+			var cidr = ip_ranges.network_ip.toString() + "/" + ip_ranges.netmask.toString();
+			temp_subnets.push(cidr);
+
+		}
+//		gs.info("temp subnets for ip " + ip + ": " + temp_subnets.toString());
+		const matchesAny = temp_subnets.find((cidr) => isIpInSubnet(ip, cidr));
+		gs.info("matches any: " + matchesAny);
+		if (matchesAny) {
+//			gs.info("MATCHES");
+			const isDuplicate = subnets.some(
+				(entry) => entry === matchesAny
+			);
+			gs.info("is duplicate: " + isDuplicate);
+			if (!isDuplicate) subnets.push(matchesAny.toString());
+		} else {
+			gs.info("NO MATCH for ip: " + ip);
+			if (!ips_without_subnet.includes(ip)) ips_without_subnet.push(ip);
+		}
+	} else {
 	}
+	
 
-	//var res = isIpInSubnet("10.0.1.150","10.0.1.0/28");
-	//gs.info("result: " + res);
+}
 
+gs.info("IPs without subnet: " + ips_without_subnet.toString());
+gs.info("Subnets: " + subnets.toString());
+
+
+
+function isValidIPv4(ip) {
+  if (typeof ip !== "string") return false;
+
+  const octets = ip.split(".");
+
+  if (octets.length !== 4) return false;
+
+  return octets.every((octet) => {
+    if (octet === "" || octet.length > 3) return false;
+    if (!/^\d+$/.test(octet)) return false;
+    if (octet.length > 1 && octet[0] === "0") return false; // no leading zeros
+    const num = Number(octet);
+    return num >= 0 && num <= 255;
+  });
 }
 
 
@@ -74,6 +131,7 @@ function isIpInSubnet(ip, cidr) {
 
   return (ipInt & mask) === (subnetInt & mask);
 }
+
 
 
 
